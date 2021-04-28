@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,21 +26,81 @@ namespace TinyBrowser
             tcpClient.Close();
             stream.Close();
 
-            Console.WriteLine(str);
-            
-            var links = Regex.Matches(str, @"<(a|link).*?href=(""|')(.+?)(""|').*?>").Select(m =>
-                m.Value).ToArray();
-            
-            var names = Regex.Matches(str, @"\"">(.*?)\</a>").Select(m =>
-                m.Value).ToArray();
+            var linkList = new Dictionary<string, string>();
 
-            foreach (var name in names) {
-                Console.WriteLine(name);
-            }
+            var links = new List<string>();
             
-            foreach (var link in links) {
-                //Console.WriteLine(GetStringBetweenSameChar(link, '"'));
+            //Gets links
+            for (int i = 0; i < str.Length; i++) {
+                var link = "";
+                var name = "";
+                string result = "";
+                if (str[i] == '<') {
+                    if (str[i + 1] == 'a') {
+                        i += 9;
+                        while (str[i] != '"') {
+                            result += str[i];
+                            i++;
+                        }
+                        links.Add(result);
+                    }
+                }
             }
+
+
+
+
+
+
+
+
+            //Console.WriteLine(str);
+            
+            
+            
+            
+            
+            // var links = Regex.Matches(str, @"<(a|link).*?href=(""|')(.+?)(""|').*?>").Select(m =>
+            //     m.Value).ToArray();
+            //
+            // // var names = Regex.Matches(str, @"\"">(.*?)\</a>").Select(m =>
+            // //     m.Value).ToArray();
+            // List<string> names = new List<string>();
+            //
+            // for (int i = 0; i < links.Length; i++) {
+            //     var current = str.IndexOf(links[i]);
+            //     var result = "";
+            //     
+            //     while (str[current] != '>') {
+            //         current++;
+            //         // Console.Write(str[current]);
+            //     }
+            //     
+            //     while (str[current] != '<') {
+            //         current++;
+            //         var charToadd = str[current];
+            //
+            //         if (charToadd != '<') {
+            //             result += charToadd;    
+            //         }
+            //     }
+            //
+            //     if (result != "") {
+            //         names.Add(result);
+            //     }
+            // }
+            //
+            // names = names.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+            //
+            // for (int i = 0; i < names.Count; i++) {
+            //     Console.WriteLine(names[i]);
+            // }
+            //
+            // Console.WriteLine("---------------------------------------------");
+            //
+            // foreach (var link in links) {
+            //     Console.WriteLine(GetStringBetweenSameChar(link, '"'));
+            // }
         }
 
          static string GetStringBetweenSameChar(string toGetFrom, char splitter) {

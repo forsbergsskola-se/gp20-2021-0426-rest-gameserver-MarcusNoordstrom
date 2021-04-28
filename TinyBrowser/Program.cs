@@ -27,12 +27,10 @@ namespace TinyBrowser
 
             var r = Regex.Matches(str, @"<(a|link).*?href=(""|')(.+?)(""|').*?>").Select(m =>
                 m.Value).ToArray();
-            var re = new RegExp("^(www|http|https)://", "i");
-
+            
             foreach (var VARIABLE in r) {
                 Console.WriteLine(VARIABLE);
             }
-            
         }
     }
 }

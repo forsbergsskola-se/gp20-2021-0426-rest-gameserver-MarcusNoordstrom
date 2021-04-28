@@ -25,12 +25,39 @@ namespace TinyBrowser
             tcpClient.Close();
             stream.Close();
 
-            var r = Regex.Matches(str, @"<(a|link).*?href=(""|')(.+?)(""|').*?>").Select(m =>
+            Console.WriteLine(str);
+            
+            var links = Regex.Matches(str, @"<(a|link).*?href=(""|')(.+?)(""|').*?>").Select(m =>
                 m.Value).ToArray();
             
-            foreach (var VARIABLE in r) {
-                Console.WriteLine(VARIABLE);
+            var names = Regex.Matches(str, @"\"">(.*?)\</a>").Select(m =>
+                m.Value).ToArray();
+
+            foreach (var name in names) {
+                Console.WriteLine(name);
+            }
+            
+            foreach (var link in links) {
+                //Console.WriteLine(GetStringBetweenSameChar(link, '"'));
             }
         }
+
+         static string GetStringBetweenSameChar(string toGetFrom, char splitter) {
+            var result = "";
+            var shouldAppend = false;
+            
+            foreach (var c in toGetFrom) {
+                if (c == splitter) {
+                    shouldAppend = !shouldAppend;
+                }
+
+                if (shouldAppend && c != '"') {
+                    result += c;
+                }
+            }
+            
+            return result;
+        }
+        
     }
 }

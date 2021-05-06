@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -10,20 +11,18 @@ namespace LameScooter {
         
 
         public static async Task<int> GetScooterCountFromStation(string stationName) {
-            var scooterData = await GetScooterData();
+            var scooterData = await Task.Run(GetScooterData);
             scooterData.TryGetValue(stationName, out var count);
             return count;
         }
 
         static async Task<Dictionary<string, int>> GetScooterData() {
             var data = await Task.Run(InitializeJson);
-            var scooterData = new Dictionary<string, int>();
 
-            foreach (var element in data.EnumerateArray()) {
-                scooterData.Add(element.GetProperty("name").GetString() ?? throw new Exception("Could not load JSON!"),
-                    element.GetProperty("bikesAvailable").GetInt16());
-            }
-            return scooterData;
+            return data.EnumerateArray().ToDictionary<JsonElement, string, int>
+                (element => element.GetProperty("name").GetString()
+                            ?? throw new Exception("Could not load JSON!"),
+                element => element.GetProperty("bikesAvailable").GetInt16());
         }
         
         static async Task<JsonElement> InitializeJson() {

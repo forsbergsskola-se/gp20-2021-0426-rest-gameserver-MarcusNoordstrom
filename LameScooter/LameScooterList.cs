@@ -22,8 +22,8 @@ namespace LameScooter {
                 "https://raw.githubusercontent.com/marczaku/GP20-2021-0426-Rest-Gameserver/main/assignments/scooters.json");
 
             var data = JsonSerializer.Deserialize<JsonElement>(json);
-
-            return data.EnumerateArray().ToDictionary<JsonElement, string, int>
+            
+            return data.GetProperty("stations").EnumerateArray().ToDictionary<JsonElement, string, int>
             (element => element.GetProperty("name").GetString()
                         ?? throw new Exception("Could not load JSON!"),
                 element => element.GetProperty("bikesAvailable").GetInt16());

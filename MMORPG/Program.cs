@@ -13,7 +13,8 @@ namespace MMORPG
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Database.MongoDatabase();
+            // CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

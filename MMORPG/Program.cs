@@ -1,20 +1,30 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace MMORPG
 {
     public class Program
     {
-        public static void Main(string[] args)
-        {
-            Database.MongoDatabase();
-            // CreateHostBuilder(args).Build().Run();
+        static async Task Main(string[] args) {
+            Database db = new Database();
+            
+            //TEST TO GET A PLAYER BY ID
+            // var player = await db.Get(ObjectId.Parse("609d9656edc14209e038c32f"));
+            // Console.WriteLine(player.Id);
+            
+            //TEST TO GET ALL NOT DELETED PLAYERS
+            // var b = await db.GetAll();
+            // foreach (var VARIABLE in b) {
+            //     Console.WriteLine(VARIABLE.Name);
+            // }
+            
+            //TEST TO CREATE A NEW PLAYER
+            Player playerToCreate = new Player {Name = "Leif The Arrogant Goblin"};
+            var playerMade = await db.Create(playerToCreate);
+            Console.WriteLine(playerMade.Name);
+            Console.WriteLine(playerMade.CreationTime());
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

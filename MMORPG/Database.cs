@@ -1,37 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace MMORPG {
     public class Database : IRepository {
 
-        public static void MongoDatabase() {
+        static IMongoDatabase MongoDatabase() {
             var client = new MongoClient("mongodb://localhost:27017").GetDatabase("Game");
-
-            var collection = client.GetCollection<Player>("Players");
-
-            var filter = Builders<Player>.Filter.Empty;
-            var cl = collection.Find(filter).ToList();
-
-            foreach (var VARIABLE in cl) {
-                Console.WriteLine(VARIABLE.Name);
-            }
+            return client;
         }
-        
-        public Task<Player> Get(Guid id) {
+
+        public async Task<Player> Get(ObjectId id) {
+            var collection = MongoDatabase().GetCollection<Player>("Players");
+            var fieldEq = new StringFieldDefinition<Player, ObjectId>(nameof(Player.Id));
+            var filter = new FilterDefinitionBuilder<Player>().Eq(fieldEq, id);
+            var player = await collection.Find(filter).SingleAsync();
+            return player;
+        }
+
+        public async Task<List<Player>> GetAll() {
+            var collection = MongoDatabase().GetCollection<Player>("Players");
+            var fieldEq = new StringFieldDefinition<Player, bool>(nameof(Player.IsDeleted));
+            var filter = new FilterDefinitionBuilder<Player>().Eq(fieldEq, false);
+            var playersList =  collection.Find(filter).ToListAsync();
             
-            throw new NotImplementedException();
-             
+            return await playersList;
         }
 
-        public Task<Player[]> GetAll() {
-            throw new NotImplementedException();
-        }
-
-        public Task<Player> Create(Player player) {
-            throw new NotImplementedException();
+        public async Task<Player> Create(Player player) {
+            player.Level = 1;
+            var collection = MongoDatabase().GetCollection<Player>("Players");
+            await collection.InsertOneAsync(player);
+            return player;
         }
 
         public Task<Player> Modify(Guid id, ModifiedPlayer player) {

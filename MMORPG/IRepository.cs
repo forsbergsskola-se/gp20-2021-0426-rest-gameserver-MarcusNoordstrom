@@ -8,7 +8,7 @@ namespace MMORPG {
         Task<Player> Get(ObjectId id);
         Task<List<Player>> GetAll();
         Task<Player> Create(Player player);
-        Task<Player> Modify(Guid id, ModifiedPlayer player);
-        Task<Player> Delete(Guid id);
+        Task<Player> Modify(ObjectId id, ModifiedPlayer player);
+        Task<Player> Delete(ObjectId id);
     }
 }

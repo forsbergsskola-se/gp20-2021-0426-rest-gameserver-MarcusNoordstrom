@@ -9,7 +9,6 @@ using MongoDB.Driver;
 
 namespace MMORPG {
     public class Database : IRepository {
-
         static IMongoDatabase MongoDatabase() {
             var client = new MongoClient("mongodb://localhost:27017").GetDatabase("Game");
             return client;
@@ -39,12 +38,17 @@ namespace MMORPG {
             return player;
         }
 
-        public Task<Player> Modify(Guid id, ModifiedPlayer player) {
+        public async Task<Player> Modify(ObjectId id, ModifiedPlayer player) {
             throw new NotImplementedException();
         }
 
-        public Task<Player> Delete(Guid id) {
-            throw new NotImplementedException();
+        public async Task<Player> Delete(ObjectId id) {
+            var collection = MongoDatabase().GetCollection<Player>("Players");
+            var fieldEq = new StringFieldDefinition<Player, ObjectId>(nameof(Player.Id));
+            var filter = new FilterDefinitionBuilder<Player>().Eq(fieldEq, id);
+            var player = await collection.Find(filter).SingleAsync();
+            await collection.DeleteOneAsync(filter);
+            return player;
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -39,7 +36,13 @@ namespace MMORPG {
         }
 
         public async Task<Player> Modify(ObjectId id, ModifiedPlayer player) {
-            throw new NotImplementedException();
+            var collection = MongoDatabase().GetCollection<Player>("Players");
+            var fieldEq = new StringFieldDefinition<Player, ObjectId>(nameof(Player.Id));
+            var filter = new FilterDefinitionBuilder<Player>().Eq(fieldEq, id);
+            var playerFound = await collection.Find(filter).SingleAsync();
+            playerFound.Score += player.Score;
+            await collection.ReplaceOneAsync(filter, playerFound);
+            return playerFound;
         }
 
         public async Task<Player> Delete(ObjectId id) {

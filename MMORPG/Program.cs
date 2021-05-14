@@ -12,12 +12,19 @@ namespace MMORPG
             Database db = new Database();
 
             var p = await db.Get(ObjectId.Parse("609dba35770604b509b323bd"));
-            Console.WriteLine(p.CreationTime());
+            Console.WriteLine(p.Score);
+            Console.WriteLine("Adding 2 to score");
+            ModifiedPlayer p2 = new ModifiedPlayer();
+            p2.Score = 2;
+            await db.Modify(ObjectId.Parse("609dba35770604b509b323bd"), p2);
+            var p3 = await db.Get(ObjectId.Parse("609dba35770604b509b323bd"));
+            Console.WriteLine(p3.Score);
             
             // TEST TO CREATE A NEW PLAYER
-            // var player = await Player.CreateNewPlayer("ARNE BARNARNE");
-            // Console.WriteLine($"Created {player.name}");
-            
+            // var player = await Player.CreateNewPlayer("Trey, the lost tester");
+            // Console.WriteLine($"Created {player.Name}");
+            // Console.WriteLine(player.CreationTime());
+
             // TEST TO GET A PLAYER BY ID
             // var player = await db.Get(ObjectId.Parse("609db71dc967721fa6031f5a"));
             // Console.WriteLine(player.Id);
